@@ -1,4 +1,4 @@
-from .core import squared_cost,sinkhorn,exact_uniform_assignment,barycentric
+from .core import squared_cost,sinkhorn,exact_uniform_assignment,barycentric,pushforward
 
 
 def demo():
@@ -19,7 +19,13 @@ def demo():
     assert not failed['converged'] and failed['row_max_abs_residual']>.1
     self_result=sinkhorn(squared_cost(x,x),w,w,2.)
     assert self_result['transport_cost']>.1
-    return {'fixture':'six synthetic2D points and a permuted translation(+.6,-.3); no learned representation or hidden correspondence evaluation',
+    push=[]
+    for arm in arms:
+        if not arm['result']['converged']:continue
+        slices=[pushforward(arm['result']['plan'],x,y,t) for t in [0.,.5,1.]]
+        assert max(s['variance_decomposition_max_abs_residual'] for s in slices)<1e-12
+        push.append({'epsilon':arm['epsilon'],'slices':slices})
+    return {'pushforward_audit':push,'fixture':'six synthetic2D points and a permuted translation(+.6,-.3); no learned representation or hidden correspondence evaluation',
             'source_points':x,'target_points':y,'cost_matrix':c,'weights':w,'arms':arms,
             'exact_uniform_assignment':exact,'independence':{'plan':independent,'transport_cost':independent_cost},
             'nonconverged_example':failed,'self_transport_epsilon2':self_result,
