@@ -36,7 +36,8 @@ def lse(values):
     return high+math.log(math.fsum(math.exp(v-high) for v in values))
 
 
-def sinkhorn(cost,source,target,epsilon=.5,max_iterations=5000,tolerance=1e-9):
+def sinkhorn(cost,source,target,epsilon=.5,max_iterations=5000,tolerance=1e-9,include_scaling=False):
+    if type(include_scaling) is not bool:raise ValueError('include_scaling must be bool')
     a,asum=weights(source,'source');b,bsum=weights(target,'target');c=matrix(cost,len(a),len(b))
     eps=number(epsilon,'epsilon');tol=number(tolerance,'tolerance')
     if not 1e-4<=eps<=1e4:raise ValueError('epsilon outside [1e-4,1e4]')
@@ -63,7 +64,7 @@ def sinkhorn(cost,source,target,epsilon=.5,max_iterations=5000,tolerance=1e-9):
             value=p[i][j];plan[ii][jj]=value;transport+=value*c[ii][jj]
             entropy-=value*logp[i][j]
     if not all(math.isfinite(z) for z in [transport,entropy,res]):raise ValueError('nonfinite solver result')
-    return {'plan':plan,'source':a,'target':b,'input_weight_sums':[asum,bsum],
+    result={'plan':plan,'source':a,'target':b,'input_weight_sums':[asum,bsum],
             'epsilon':eps,'iterations':step,'converged':res<=tol,'tolerance':tol,
             'row_max_abs_residual':er,'column_max_abs_residual':ec,'total_mass':math.fsum(rr),
             'transport_cost':transport,'entropy_nats':entropy,
@@ -71,6 +72,12 @@ def sinkhorn(cost,source,target,epsilon=.5,max_iterations=5000,tolerance=1e-9):
             'objective_convention':'sum(P*C) + epsilon*sum(P*log(P)); zero terms contribute0',
             'underflowed_active_entries':sum(z==0 for row in p for z in row),
             'active_shape':[len(rows),len(cols)],'cell_update_budget':len(rows)*len(cols)*steps}
+    if include_scaling:
+        lu=[None]*len(a);lv=[None]*len(b)
+        for i,k in enumerate(rows):lu[k]=u[i]
+        for j,k in enumerate(cols):lv[k]=v[j]
+        result['log_scaling']={'source':lu,'target':lv}
+    return result
 
 
 def points(x):
