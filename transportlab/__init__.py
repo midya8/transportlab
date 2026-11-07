@@ -1,0 +1,1 @@
+"""Inspectable entropic optimal transport."""
