@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="500" viewBox="0 0 960 500" role="img" aria-label="TransportLab joint atom pushforward versus barycentric mean collapse">
+<rect width="960" height="500" fill="white"/><g font-family="Arial,sans-serif" fill="#251f21">
+<text x="24" y="32" font-size="23">TransportLab | moving mass is not moving its mean</text>
+<text x="24" y="57" font-size="13">Same converged epsilon2 coupling. Every pair keeps its mass at (1-t)*source + t*target.</text>
+<text x="40" y="86" font-size="16" font-weight="600">t = 0</text>
+<rect x="40" y="104" width="260" height="220" fill="white" stroke="#ddd"/>
+<path d="M68.88888888888889,104v220" stroke="#eae9ea"/><text x="68.88888888888889" y="341" text-anchor="middle" font-size="11">-1</text>
+<path d="M126.66666666666666,104v220" stroke="#eae9ea"/><text x="126.66666666666666" y="341" text-anchor="middle" font-size="11">0</text>
+<path d="M184.44444444444446,104v220" stroke="#eae9ea"/><text x="184.44444444444446" y="341" text-anchor="middle" font-size="11">1</text>
+<path d="M242.22222222222223,104v220" stroke="#eae9ea"/><text x="242.22222222222223" y="341" text-anchor="middle" font-size="11">2</text>
+<path d="M40,280.0h260" stroke="#eae9ea"/><text x="35" y="284.0" text-anchor="end" font-size="10">-1</text>
+<path d="M40,206.66666666666666h260" stroke="#eae9ea"/><text x="35" y="210.66666666666666" text-anchor="end" font-size="10">0</text>
+<path d="M40,133.33333333333331h260" stroke="#eae9ea"/><text x="35" y="137.33333333333331" text-anchor="end" font-size="10">1</text>
+<circle cx="68.889" cy="280.000" r="8.165" fill="#585254" opacity=".55"/>
+<circle cx="68.889" cy="133.333" r="8.165" fill="#585254" opacity=".55"/>
+<circle cx="126.667" cy="206.667" r="8.165" fill="#585254" opacity=".55"/>
+<circle cx="184.444" cy="280.000" r="8.165" fill="#585254" opacity=".55"/>
+<circle cx="184.444" cy="133.333" r="8.165" fill="#585254" opacity=".55"/>
+<circle cx="242.222" cy="206.667" r="8.165" fill="#585254" opacity=".55"/>
+<path d="M64.889,280.000h8 M68.889,276.000v8" stroke="#387667" stroke-width="2"/>
+<path d="M64.889,133.333h8 M68.889,129.333v8" stroke="#387667" stroke-width="2"/>
+<path d="M122.667,206.667h8 M126.667,202.667v8" stroke="#387667" stroke-width="2"/>
+<path d="M180.444,280.000h8 M184.444,276.000v8" stroke="#387667" stroke-width="2"/>
+<path d="M180.444,133.333h8 M184.444,129.333v8" stroke="#387667" stroke-width="2"/>
+<path d="M238.222,206.667h8 M242.222,202.667v8" stroke="#387667" stroke-width="2"/>
+<text x="40" y="364" font-size="12">Full atom variance trace: 1.888889</text>
+<text x="40" y="385" font-size="12">Mean-map variance trace: 1.888889</text>
+<text x="350" y="86" font-size="16" font-weight="600">t = 0.5</text>
+<rect x="350" y="104" width="260" height="220" fill="white" stroke="#ddd"/>
+<path d="M378.8888888888889,104v220" stroke="#eae9ea"/><text x="378.8888888888889" y="341" text-anchor="middle" font-size="11">-1</text>
+<path d="M436.66666666666663,104v220" stroke="#eae9ea"/><text x="436.66666666666663" y="341" text-anchor="middle" font-size="11">0</text>
+<path d="M494.44444444444446,104v220" stroke="#eae9ea"/><text x="494.44444444444446" y="341" text-anchor="middle" font-size="11">1</text>
+<path d="M552.2222222222222,104v220" stroke="#eae9ea"/><text x="552.2222222222222" y="341" text-anchor="middle" font-size="11">2</text>
+<path d="M350,280.0h260" stroke="#eae9ea"/><text x="345" y="284.0" text-anchor="end" font-size="10">-1</text>
+<path d="M350,206.66666666666666h260" stroke="#eae9ea"/><text x="345" y="210.66666666666666" text-anchor="end" font-size="10">0</text>
+<path d="M350,133.33333333333331h260" stroke="#eae9ea"/><text x="345" y="137.33333333333331" text-anchor="end" font-size="10">1</text>
+<circle cx="396.222" cy="291.000" r="6.596" fill="#585254" opacity=".55"/>
+<circle cx="396.222" cy="217.667" r="3.431" fill="#585254" opacity=".55"/>
+<circle cx="396.222" cy="144.333" r="6.596" fill="#585254" opacity=".55"/>
+<circle cx="425.111" cy="254.333" r="4.720" fill="#585254" opacity=".55"/>
+<circle cx="425.111" cy="181.000" r="4.720" fill="#585254" opacity=".55"/>
+<circle cx="454.000" cy="291.000" r="2.274" fill="#585254" opacity=".55"/>
+<circle cx="454.000" cy="217.667" r="1.183" fill="#585254" opacity=".55"/>
+<circle cx="454.000" cy="217.667" r="4.590" fill="#585254" opacity=".55"/>
+<circle cx="454.000" cy="144.333" r="2.274" fill="#585254" opacity=".55"/>
+<circle cx="454.000" cy="291.000" r="2.274" fill="#585254" opacity=".55"/>
+<circle cx="454.000" cy="217.667" r="1.183" fill="#585254" opacity=".55"/>
+<circle cx="454.000" cy="144.333" r="2.274" fill="#585254" opacity=".55"/>
+<circle cx="482.889" cy="254.333" r="4.484" fill="#585254" opacity=".55"/>
+<circle cx="482.889" cy="181.000" r="4.484" fill="#585254" opacity=".55"/>
+<circle cx="511.778" cy="291.000" r="5.794" fill="#585254" opacity=".55"/>
+<circle cx="511.778" cy="217.667" r="3.015" fill="#585254" opacity=".55"/>
+<circle cx="511.778" cy="217.667" r="2.741" fill="#585254" opacity=".55"/>
+<circle cx="511.778" cy="144.333" r="5.794" fill="#585254" opacity=".55"/>
+<circle cx="540.667" cy="254.333" r="5.078" fill="#585254" opacity=".55"/>
+<circle cx="540.667" cy="181.000" r="5.078" fill="#585254" opacity=".55"/>
+<circle cx="569.556" cy="217.667" r="6.049" fill="#585254" opacity=".55"/>
+<path d="M402.487,277.481h8 M406.487,273.481v8" stroke="#387667" stroke-width="2"/>
+<path d="M402.487,157.852h8 M406.487,153.852v8" stroke="#387667" stroke-width="2"/>
+<path d="M452.084,217.667h8 M456.084,213.667v8" stroke="#387667" stroke-width="2"/>
+<path d="M504.036,272.760h8 M508.036,268.760v8" stroke="#387667" stroke-width="2"/>
+<path d="M504.036,162.574h8 M508.036,158.574v8" stroke="#387667" stroke-width="2"/>
+<path d="M550.426,217.667h8 M554.426,213.667v8" stroke="#387667" stroke-width="2"/>
+<text x="350" y="364" font-size="12">Full atom variance trace: 1.576437</text>
+<text x="350" y="385" font-size="12">Mean-map variance trace: 1.319500</text>
+<text x="660" y="86" font-size="16" font-weight="600">t = 1</text>
+<rect x="660" y="104" width="260" height="220" fill="white" stroke="#ddd"/>
+<path d="M688.8888888888889,104v220" stroke="#eae9ea"/><text x="688.8888888888889" y="341" text-anchor="middle" font-size="11">-1</text>
+<path d="M746.6666666666666,104v220" stroke="#eae9ea"/><text x="746.6666666666666" y="341" text-anchor="middle" font-size="11">0</text>
+<path d="M804.4444444444445,104v220" stroke="#eae9ea"/><text x="804.4444444444445" y="341" text-anchor="middle" font-size="11">1</text>
+<path d="M862.2222222222222,104v220" stroke="#eae9ea"/><text x="862.2222222222222" y="341" text-anchor="middle" font-size="11">2</text>
+<path d="M660,280.0h260" stroke="#eae9ea"/><text x="655" y="284.0" text-anchor="end" font-size="10">-1</text>
+<path d="M660,206.66666666666666h260" stroke="#eae9ea"/><text x="655" y="210.66666666666666" text-anchor="end" font-size="10">0</text>
+<path d="M660,133.33333333333331h260" stroke="#eae9ea"/><text x="655" y="137.33333333333331" text-anchor="end" font-size="10">1</text>
+<circle cx="723.556" cy="302.000" r="8.165" fill="#585254" opacity=".55"/>
+<circle cx="723.556" cy="155.333" r="8.165" fill="#585254" opacity=".55"/>
+<circle cx="781.333" cy="228.667" r="8.165" fill="#585254" opacity=".55"/>
+<circle cx="839.111" cy="302.000" r="8.165" fill="#585254" opacity=".55"/>
+<circle cx="839.111" cy="155.333" r="8.165" fill="#585254" opacity=".55"/>
+<circle cx="896.889" cy="228.667" r="8.165" fill="#585254" opacity=".55"/>
+<path d="M740.085,274.962h8 M744.085,270.962v8" stroke="#387667" stroke-width="2"/>
+<path d="M740.085,182.372h8 M744.085,178.372v8" stroke="#387667" stroke-width="2"/>
+<path d="M781.501,228.667h8 M785.501,224.667v8" stroke="#387667" stroke-width="2"/>
+<path d="M827.628,265.519h8 M831.628,261.519v8" stroke="#387667" stroke-width="2"/>
+<path d="M827.628,191.814h8 M831.628,187.814v8" stroke="#387667" stroke-width="2"/>
+<path d="M862.630,228.667h8 M866.630,224.667v8" stroke="#387667" stroke-width="2"/>
+<text x="660" y="364" font-size="12">Full atom variance trace: 1.888889</text>
+<text x="660" y="385" font-size="12">Mean-map variance trace: 0.861140</text>
+<text x="24" y="419" font-size="13">Gray circle area follows joint mass. Exact coincident atoms aggregated for display. Teal +: one mean per source.</text>
+<text x="24" y="442" font-size="13">Same axes: x[-1.5,3], y[-1.6,1.4]. All36 pair atoms and six mean rows remain in JSON; no mass threshold.</text>
+<text x="24" y="465" font-size="13">At t=1 full atoms reproduce actual target column masses; mean-map variance is smaller. Neither is a sampled path.</text>
+<text x="24" y="488" font-size="13">Moment decomposition is an arithmetic identity, not coupling optimality, geometry recovery or a causal claim.</text>
+</g></svg>
