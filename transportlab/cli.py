@@ -2,6 +2,7 @@ import argparse
 import json
 from .core import sinkhorn,squared_cost,barycentric,exact_uniform_assignment,pushforward
 from .demo import demo
+from .audit import audit_transport
 
 
 def read(path):
@@ -13,6 +14,7 @@ def main():
     sub=p.add_subparsers(dest='command',required=True);sub.add_parser('demo')
     q=sub.add_parser('solve');q.add_argument('input');q.add_argument('--epsilon',type=float,default=.5)
     q.add_argument('--max-iterations',type=int,default=5000);q.add_argument('--tolerance',type=float,default=1e-9)
+    q=sub.add_parser('audit');q.add_argument('input');q.add_argument('--epsilon',type=float,default=.5);q.add_argument('--max-iterations',type=int,default=5000);q.add_argument('--tolerance',type=float,default=1e-9)
     q=sub.add_parser('assignment');q.add_argument('input')
     q=sub.add_parser('push');q.add_argument('input');q.add_argument('--epsilon',type=float,default=.5);q.add_argument('--time',type=float,default=.5)
     a=p.parse_args()
@@ -29,6 +31,8 @@ def main():
                 x,_=weights(v['source_weights'],'source');y,_=weights(v['target_weights'],'target')
                 if len(x)!=n or len(y)!=n or any(abs(z-1/n)>1e-12 for z in x+y):raise ValueError('assignment requires equal-size uniform weights')
                 r=exact_uniform_assignment(c)
+            elif a.command=='audit':
+                r=audit_transport(c,v['source_weights'],v['target_weights'],a.epsilon,a.max_iterations,a.tolerance)
             elif a.command=='push':
                 r=sinkhorn(c,v['source_weights'],v['target_weights'],a.epsilon)
                 if not r['converged']:raise ValueError('push CLI requires a converged plan; use solve to inspect residuals')
