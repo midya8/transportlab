@@ -21,3 +21,4 @@ jobs:
           python-version: '3.11'
       - run: python -m transportlab demo > /tmp/transport-demo.json
       - run: python examples/render_demo.py /tmp/transport-demo.json --check
+      - run: python examples/render_pushforward.py /tmp/transport-demo.json --check
