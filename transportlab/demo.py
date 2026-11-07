@@ -1,3 +1,4 @@
+from .audit import audit_transport
 from .core import squared_cost,sinkhorn,exact_uniform_assignment,barycentric,pushforward
 
 
@@ -25,7 +26,10 @@ def demo():
         slices=[pushforward(arm['result']['plan'],x,y,t) for t in [0.,.5,1.]]
         assert max(s['variance_decomposition_max_abs_residual'] for s in slices)<1e-12
         push.append({'epsilon':arm['epsilon'],'slices':slices})
-    return {'pushforward_audit':push,'fixture':'six synthetic2D points and a permuted translation(+.6,-.3); no learned representation or hidden correspondence evaluation',
+    objective_audits=[{'epsilon':e,'audit':audit_transport(c,w,w,e)} for e in [.1,.5,2.]]
+    objective_audits.append({'fixture':'one-iteration unequal marginal failure','audit':audit_transport([[0.,4.],[4.,0.]],[.9,.1],[.5,.5],.01,1)})
+    assert all(z['audit']['rounded']['row_max_abs_residual']<1e-12 and z['audit']['rounded']['column_max_abs_residual']<1e-12 and z['audit']['signed_numerical_gap']>=-1e-8 for z in objective_audits)
+    return {'objective_audits':objective_audits,'pushforward_audit':push,'fixture':'six synthetic2D points and a permuted translation(+.6,-.3); no learned representation or hidden correspondence evaluation',
             'source_points':x,'target_points':y,'cost_matrix':c,'weights':w,'arms':arms,
             'exact_uniform_assignment':exact,'independence':{'plan':independent,'transport_cost':independent_cost},
             'nonconverged_example':failed,'self_transport_epsilon2':self_result,
