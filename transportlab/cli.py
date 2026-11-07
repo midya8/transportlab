@@ -3,6 +3,7 @@ import json
 from .core import sinkhorn,squared_cost,barycentric,exact_uniform_assignment,pushforward
 from .demo import demo
 from .audit import audit_transport
+from .sensitivity import differentiate_iterations
 
 
 def read(path):
@@ -12,6 +13,7 @@ def read(path):
 def main():
     p=argparse.ArgumentParser(description='Auditable offline log-domain entropic transport')
     sub=p.add_subparsers(dest='command',required=True);sub.add_parser('demo')
+    q=sub.add_parser('sensitivity');q.add_argument('input');q.add_argument('--epsilon',type=float,default=.5);q.add_argument('--iterations',type=int,default=100)
     q=sub.add_parser('solve');q.add_argument('input');q.add_argument('--epsilon',type=float,default=.5)
     q.add_argument('--max-iterations',type=int,default=5000);q.add_argument('--tolerance',type=float,default=1e-9)
     q=sub.add_parser('audit');q.add_argument('input');q.add_argument('--epsilon',type=float,default=.5);q.add_argument('--max-iterations',type=int,default=5000);q.add_argument('--tolerance',type=float,default=1e-9)
@@ -20,6 +22,10 @@ def main():
     a=p.parse_args()
     try:
         if a.command=='demo':r=demo()
+        elif a.command=='sensitivity':
+            v=read(a.input)
+            if not isinstance(v,dict) or set(v)!={'cost','cost_direction','source_weights','target_weights','epsilon_direction'}:raise ValueError('sensitivity input requires exact cost/cost_direction/source_weights/target_weights/epsilon_direction fields')
+            r=differentiate_iterations(v['cost'],v['source_weights'],v['target_weights'],v['cost_direction'],a.epsilon,v['epsilon_direction'],a.iterations)
         else:
             v=read(a.input)
             if not isinstance(v,dict) or set(v)!={'source_points','target_points','source_weights','target_weights'}:raise ValueError('input requires exact source_points/target_points/source_weights/target_weights fields')
