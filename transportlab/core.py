@@ -112,3 +112,45 @@ def exact_uniform_assignment(cost):
     plan=[[float(best[1][i]==j)/n for j in range(n)] for i in range(n)]
     return {'transport_cost':best[0],'permutation':list(best[1]),'plan':plan,'permutations_checked':count,
             'scope':'unregularized OT reference for equal-size uniform weights only; lexicographically first optimal assignment'}
+
+
+def pushforward(plan,source_points,target_points,time=.5):
+    """All atoms of (1-t)*X+t*Y under the supplied joint masses.
+
+    This audits the supplied plan, not feasibility against requested marginals.
+    Moments normalize by actual positive total mass; atom masses are unchanged.
+    """
+    x,y=points(source_points),points(target_points);t=number(time,'time')
+    if not 0<=t<=1:raise ValueError('time outside[0,1]')
+    if not isinstance(plan,list) or len(plan)!=len(x):raise ValueError('plan/source shape mismatch')
+    masses=[]
+    for row in plan:
+        if not isinstance(row,list) or len(row)!=len(y):raise ValueError('plan/target shape mismatch')
+        values=[number(v,'plan mass') for v in row]
+        if any(v<0 for v in values):raise ValueError('negative plan mass')
+        masses.append(values)
+    total=math.fsum(v for row in masses for v in row)
+    if not math.isfinite(total) or not 0<total<=1e6:raise ValueError('plan total mass must be in(0,1e6]')
+    rows=[math.fsum(row) for row in masses]
+    cols=[math.fsum(row[j] for row in masses) for j in range(len(y))]
+    atoms=[];means=[];bary_atoms=[]
+    for i,row in enumerate(masses):
+        mapped=[]
+        for j,mass in enumerate(row):
+            point=[(1-t)*x[i][k]+t*y[j][k] for k in range(2)]
+            atoms.append({'source_index':i,'target_index':j,'point':point,'mass':mass})
+            mapped.append(point)
+        mean=[math.fsum(v*p[k] for v,p in zip(row,mapped))/rows[i] for k in range(2)] if rows[i] else None
+        means.append(mean);bary_atoms.append({'source_index':i,'point':mean,'mass':rows[i]})
+    def moments(atoms):
+        mean=[math.fsum(a['mass']*a['point'][k] for a in atoms if a['mass'])/total for k in range(2)]
+        covariance=[[math.fsum(a['mass']*(a['point'][k]-mean[k])*(a['point'][l]-mean[l]) for a in atoms if a['mass'])/total for l in range(2)] for k in range(2)]
+        return {'mean':mean,'covariance':covariance,'variance_trace':sum(covariance[k][k] for k in range(2))}
+    full=moments(atoms);bary=moments(bary_atoms)
+    conditional=[[math.fsum(a['mass']*(a['point'][k]-means[a['source_index']][k])*(a['point'][l]-means[a['source_index']][l]) for a in atoms if a['mass'])/total for l in range(2)] for k in range(2)]
+    residual=max(abs(full['covariance'][k][l]-bary['covariance'][k][l]-conditional[k][l]) for k in range(2) for l in range(2))
+    return {'time':t,'atoms':atoms,'barycentric_atoms':bary_atoms,'total_mass':total,
+            'actual_source_mass':rows,'actual_target_mass':cols,'atom_count':len(atoms),
+            'full_moments':full,'barycentric_moments':bary,
+            'mean_within_source_covariance':conditional,'variance_decomposition_max_abs_residual':residual,
+            'semantics':'unchanged joint atom masses; moments normalized by actual total; not a feasibility certificate, fitted model or sampled trajectory'}
