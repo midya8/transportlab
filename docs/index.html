@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>TransportLab · Marginal derivatives</title>
+    <link rel="stylesheet" href="marginal.css" />
+  </head>
+  <body>
+    <main>
+      <header>
+        <a href="https://github.com/midya8/transportlab"
+          >TransportLab / source</a
+        >
+        <p class="eyebrow">
+          FINITE SINKHORN COMPUTATION · NORMALIZED RAW WEIGHTS
+        </p>
+        <h1>Differentiate the transport computation</h1>
+        <p class="intro">
+          Change raw weights, costs and regularization together. Inspect the
+          derivative through every normalization and every fixed row/column
+          update, without pretending an unfinished plan is an optimum.
+        </p>
+        <p>
+          The original solver and its results stay separate. This workbench
+          differentiates a bounded computation, not an adaptive stopping rule,
+          rounded plan or exact optimal-transport solution.
+        </p>
+      </header>
+      <section class="input-panel">
+        <h2>Model and direction</h2>
+        <label for="control">Supplied arithmetic control</label
+        ><select id="control"></select>
+        <p id="note" class="note"></p>
+        <details>
+          <summary>Edit all inputs</summary>
+          <p>
+            Raw weights are normalized separately on each side. Positive raw
+            weights must be at least 0.0001; zero weights require zero
+            direction. One to four rows/columns; costs 0–100; epsilon 0.01–100;
+            directions -100–100; 1–500 fixed updates. These are local
+            derivatives: finite perturbations must stay inside the admissible
+            domain.
+          </p>
+          <label for="input">Input JSON</label
+          ><textarea id="input" rows="16" spellcheck="false"></textarea
+          ><button id="restore" type="button">Restore selected control</button>
+        </details>
+        <p id="error" role="alert"></p>
+      </section>
+      <section>
+        <h2>Follow the same computation</h2>
+        <p>
+          The selected row is an already-computed prefix of exactly N updates
+          from zero log scalings. Moving this control selects a prefix; it does
+          not change the solver's stopping rule or select an optimum.
+        </p>
+        <label for="step">Selected complete update</label
+        ><input id="step" type="range" min="1" max="1" value="1" /><output
+          id="step-label"
+          for="step"
+          >-</output
+        >
+        <div class="metrics">
+          <article>
+            <h3>Full objective derivative</h3>
+            <p id="full">-</p>
+            <small>Through actual finite iterates and raw normalization.</small>
+          </article>
+          <article>
+            <h3>Requested-marginal candidate</h3>
+            <p id="candidate">-</p>
+            <small>Direct terms + f·da + g·db. No optimum certificate.</small>
+          </article>
+          <article>
+            <h3>Missing residual-tangent term</h3>
+            <p id="missing">-</p>
+            <small>f·(d row(P)-da) + g·(d col(P)-db).</small>
+          </article>
+        </div>
+        <p id="identity" class="note"></p>
+        <div id="terms" class="table-wrap"></div>
+      </section>
+      <section>
+        <h2>Normalization is part of the derivative</h2>
+        <p>
+          For raw weights w with total W, normalized a=w/W and
+          da=(dw-a·sum(dw))/W. A direction proportional to the whole raw vector
+          changes no normalized mass. Zero-weight rows stay excluded; no
+          derivative across changing support is claimed.
+        </p>
+        <div id="weights" class="table-wrap"></div>
+      </section>
+      <section>
+        <h2>Inspect each cell and each constraint</h2>
+        <div id="cell-table" class="table-wrap"></div>
+        <p class="note">
+          Log mass is retained even where a positive active plan entry
+          underflows to zero. Its displayed floating tangent can underflow too.
+          Excluded cells have null log mass, not a fabricated log zero.
+        </p>
+        <div id="mass-table" class="table-wrap"></div>
+        <div id="residuals" class="table-wrap"></div>
+        <details>
+          <summary>Every recentered potential and derivative</summary>
+          <p>
+            The gauge convention subtracts the mean row log scaling and adds it
+            to the column scaling after every full update. The dual convention
+            is f=epsilon·u, g=epsilon·(v+1), matching F=ΣPC+epsilon·ΣP log(P).
+          </p>
+          <div id="potentials" class="table-wrap"></div>
+        </details>
+      </section>
+      <section>
+        <h2>All completed updates</h2>
+        <p>
+          Primal feasibility and tangent feasibility are different diagnostics.
+          A small row-mass error does not by itself bound a row-tangent error.
+          The table keeps both, along with the signed derivative difference.
+        </p>
+        <div id="history" class="table-wrap"></div>
+      </section>
+      <section>
+        <h2>Replay outside the browser</h2>
+        <div class="actions">
+          <button id="copy" type="button">Copy input + report</button
+          ><button id="download" type="button">Download input + report</button>
+        </div>
+        <p id="status" role="status"></p>
+        <details id="report-details">
+          <summary>Complete input and full history</summary>
+          <label for="report">Source-bound JSON report</label
+          ><textarea id="report" readonly rows="12"></textarea>
+        </details>
+        <p>
+          <code>python -m transportlab.marginal input.json</code><br />Extract
+          the archive's <code>input</code> field for input.json. Native analytic
+          tangent loops and this browser's scalar dual-number arithmetic are
+          independently implemented. Saved controls replay all update cells, not
+          just one summary metric.
+        </p>
+        <p>
+          <a
+            href="https://github.com/midya8/transportlab/blob/main/MARGINALS.md"
+            >Derivation, controls and limits</a
+          >
+          ·
+          <a href="https://github.com/midya8/transportlab"
+            >Code and reproduction</a
+          >
+        </p>
+      </section>
+      <footer>
+        <p>
+          All quantities are binary64 numerical audits, not interval-certified
+          derivatives or bounds. Local fixed-support directions, finite
+          iterations and user-supplied inputs only. No adaptive-stop derivative,
+          implicit optimum, weight-support change, rounded-plan derivative,
+          causal influence, learned matching quality or speed claim.
+        </p>
+      </footer>
+    </main>
+    <script src="marginal-data.js"></script>
+    <script src="marginal-json.js"></script>
+    <script src="marginal-engine.js"></script>
+    <script src="marginal-app.js"></script>
+  </body>
+</html>
