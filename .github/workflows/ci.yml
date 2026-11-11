@@ -22,3 +22,25 @@ jobs:
       - run: python -m transportlab demo > /tmp/transport-demo.json
       - run: python examples/render_demo.py /tmp/transport-demo.json --check
       - run: python examples/render_pushforward.py /tmp/transport-demo.json --check
+
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: node --test tests/*.cjs
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip wheel . --no-deps -w /tmp/wheels
+      - run: python -m pip install --target /tmp/installed /tmp/wheels/*.whl
+      - run: bash examples/verify_marginal_wheel.sh /tmp/installed

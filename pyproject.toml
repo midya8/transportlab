@@ -3,7 +3,7 @@ requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
 [project]
 name = "transportlab"
-version = "0.1.0"
+version = "0.2.0"
 description = "Auditable log-domain entropic optimal transport"
 requires-python = ">=3.10"
 license = {text = "MIT"}
@@ -11,3 +11,6 @@ license = {text = "MIT"}
 transportlab = "transportlab.cli:main"
 [tool.setuptools.packages.find]
 include = ["transportlab*"]
+
+[tool.setuptools.package-data]
+transportlab = ["artifacts/*.json"]
