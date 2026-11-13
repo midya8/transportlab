@@ -1,8 +1,33 @@
 # TransportLab
 
-A small entropic optimal transport library with full coupling matrices, explicit marginal errors, tiny assignment references and fixed-update sensitivity audits. Python uses only the standard library. The browser workbench runs locally without a server.
+TransportLab keeps the plan, its marginal errors and the computation that produced it visible. It solves small entropic transport problems, audits a separate rounded plan and dual objective, and traces derivatives through a fixed number of updates. Python uses only the standard library. The browser workbench runs locally without a server.
+
+| Question | Start here | What the result does not establish |
+| --- | --- | --- |
+| How does a raw weight edit change a finite solve? | [Normalized-weight workbench](https://midya8.github.io/transportlab/) | A finite-update derivative is not an optimum derivative. Requested and actual marginal tangents can differ. |
+| Did a low-cost plan meet its marginals? | [Solver contract](#mathematical-contract) and [separate audit](#separate-primal-and-dual-numerical-audit) | A small objective does not imply feasibility. Floating primal/dual numbers are not certified bounds. |
+| Does a conditional mean preserve transported mass? | [Full atoms and conditional means](#mass-pushforward-versus-mean-map-collapse) | A barycentric mean is not a sample or a mass-preserving replacement for the full coupling. |
+| How do costs and epsilon change a fixed computation? | [Fixed-weight directions](#differentiate-the-computation-not-a-stopping-rule) | No stopping rule, rounding operation or support change is differentiated. |
+
+The current suite has **62 Python tests and six Node/actual-Chrome tests**. All earlier solver, pushforward, rounding and fixed-weight sensitivity outputs remain unchanged. The controls below are bounded arithmetic examples, not an algorithm benchmark or a claim of certified optimality.
 
 ![Entropic plan, objectives and feasibility audit](assets/transport-audit.svg)
+
+## Normalized weight directions
+
+[Open the browser workbench](https://midya8.github.io/transportlab/) or read [MARGINALS.md](MARGINALS.md) for the input schema, derivation and limits. The browser normalizes raw source and target weights separately, differentiates that normalization, then follows exactly N row/column updates. Cost and epsilon may move at the same time. Every plan, tangent, marginal, potential and history row remains available, with editable input and a complete JSON download.
+
+One update of the early-weight control has full objective tangent `0.010665526`, while a requested-marginal envelope candidate gives `-0.019162331`. Their difference is accounted for by the actual marginal-tangent residual terms. The candidate is not an optimum derivative merely because it uses potentials. A normalization-only control has nonzero raw directions but zero normalized and plan tangents; null sensitivity does not establish feasibility.
+
+```sh
+python examples/marginal_controls.py
+python -m transportlab.marginal input.json > report.json
+node --test tests/*.cjs
+```
+
+This separate API accepts 1-4 weights per side, fixed support and 1-500 updates. Positive raw weights are at least `1e-4`; costs and raw weights are in `[0,100]`, epsilon in `[0.01,100]`, and directions in `[-100,100]`. It does not change the earlier solver's bounds. Formal local directions need not give a two-sided finite step inside those bounds. It does not differentiate adaptive stopping, rounding or changing support.
+
+The current suite has 62 Python tests and six Node/actual-Chrome tests, including the original 46 Python tests. Independent Decimal80 positive-kernel finite differences check 33 control snapshots and 60 generated rectangular cases. Native analytic tangents and independent browser scalar dual numbers agree on full reports for all 12 controls plus 80 generated cases. Actual Chrome checks every supplied history step, responsive editing and two real JSON downloads replayed natively. An installed-wheel check repeats the old demo and fixed-weight sensitivity outputs plus all new controls outside the source tree. These are bounded arithmetic and interaction checks, not certified optimality or large-scale performance results.
 
 ## Run offline
 
@@ -37,7 +62,7 @@ Updates use log-sum-exp, not a pre-materialized kernel that can underflow entire
 
 Squared Euclidean ground costs are used by the point CLI and demo. They are not a metric. Finite-epsilon transport costs can have positive self-cost; this implementation is **not** the debiased Sinkhorn divergence, a Wasserstein metric, a differentiable training loss API or an exact general LP solver.
 
-## Measured development fixture
+## A low cost with wrong marginals
 
 Six fixed synthetic2D points; targets are a permuted translation(+0.6,-0.3). Uniform marginals. No learned embeddings, hidden labels, architecture/seed search, hyperparameter selection or downstream matching claim. All three epsilon settings and the nonconverged arm remain visible.
 
@@ -53,7 +78,7 @@ Enumerating all720 assignments gives the unregularized equal-uniform OT referenc
 
 Self-transport at epsilon2 costs1.249807 despite identical supports. A separate unequal-marginal, one-iteration counterexample has row error0.4 while columns are already accurate. Both run in the demo. The heatmaps display every plan cell with shared scale0..1/6 and numeric masses; no top-k or edge threshold hides mass. Full plans, history, input points and barycentric means are in JSON.
 
-## Barycentric maps are not samples
+## What a barycentric map returns
 
 `barycentric(plan, target_points)` computes each conditional target mean using that row's **actual** mass. Zero-mass rows return `None`. A diffuse plan can map points between target support points: those means do not reproduce the target empirical distribution and are not guaranteed one-to-one correspondences. On an unconverged plan, requested source masses may differ from actual row masses; the function does not conceal that distinction.
 
@@ -79,9 +104,9 @@ Demo JSON audits both converged epsilon0.5/2 plans at t=0/0.5/1; all36 pair atom
 
 Eight new tests check endpoint masses, interpolated means, deterministic zero conditional variance, independent-coupling collapse, the t² covariance gap, mass-scale invariance of normalized moments, zero rows, unchanged inputs, invalid plans/times and CLI convergence rejection. All original solver fixture fields and heatmaps remain unchanged.
 
-## Audits and bounds
+## Earlier solver checks and bounds
 
-The original 46 tests check the closed-form symmetric2x2 solution, direct non-log scaling reference, zero-cost independence, zero weights, underflowed kernels, shared cost shifts and simultaneous cost/epsilon scaling, rectangular/permuted marginals, explicit nonconvergence, positive self-cost, exhaustive assignment/endpoints, barycentric means, no mutation, strict bounds and CLI rejection. CI runs Python 3.10-3.13 plus the full fixture and both reproduced SVGs on 3.11.
+The earlier 46-test suite checks the closed-form symmetric2x2 solution, direct non-log scaling reference, zero-cost independence, zero weights, underflowed kernels, shared cost shifts and simultaneous cost/epsilon scaling, rectangular/permuted marginals, explicit nonconvergence, positive self-cost, exhaustive assignment/endpoints, barycentric means, no mutation, strict bounds and CLI rejection. CI runs Python 3.10-3.13 plus the full fixture and both reproduced SVGs on 3.11.
 
 Probability sums must be within1e-12 of1, then are explicitly normalized by their supplied sums; original sums and normalized weights are returned.1-64 rows per side, finite nonnegative costs<=1e6, epsilon[1e-4,1e4], iterations1-5000, tolerance[1e-12,1e-3], active_cells*max_iterations<=10,000,000. Point coordinates[-100,100]; two coordinates only. Assignment size1-8. Booleans/nonfinite values fail. Bounds are resource limits, not convergence guarantees. Costs depend on coordinate units and must scale with epsilon to preserve a plan. [DESIGN.md](DESIGN.md) gives implementation details and limits.
 
@@ -120,7 +145,7 @@ signed_numerical_gap = rounded_regularized_objective - D(f,g)
 
 Weak duality gives a lower dual and upper feasible primal in exact arithmetic. **These outputs are floating-point numerical audits, not interval-certified bounds.** Gap stays signed, including negative roundoff; a displayed zero is not a proof of exact optimality. Rounding is row downscaling, column downscaling, then a rank-one nonnegative deficit fill. Tiny negative subtraction deficits are clipped to zero with count and pre-clipping values returned, alongside both marginal residuals, deficit-total mismatch, scales, added mass and L1 change. Zero rows/columns are preserved; dual potentials there are null and excluded. Exponential underflow and potential cancellation can affect numerical objectives. Nothing here bounds unregularized OT error or makes the original plan feasible.
 
-`round_plan` accepts finite nonnegative rectangular matrices with total mass at most1e6, including all-zero input, using the existing1..64 marginal bounds. It does not mutate inputs. `audit_transport` keeps existing solver cost/epsilon/work bounds. Tests include an independent closed-form2x2 optimum, a zero-cost unequal-marginal optimum, gauge/cost-shift invariance, underflow and zero support, independent feasible-plan weak-duality comparisons,30 deterministic randomized rectangular rounding/capped-solve checks and CLI errors. The original suite has 46 tests.
+`round_plan` accepts finite nonnegative rectangular matrices with total mass at most1e6, including all-zero input, using the existing1..64 marginal bounds. It does not mutate inputs. `audit_transport` keeps existing solver cost/epsilon/work bounds. Tests include an independent closed-form2x2 optimum, a zero-cost unequal-marginal optimum, gauge/cost-shift invariance, underflow and zero support, independent feasible-plan weak-duality comparisons,30 deterministic randomized rectangular rounding/capped-solve checks and CLI errors. Those earlier 46 tests are retained within the current 62-test suite.
 
 Rounding attribution: independently implemented from Algorithm2 in [Altschuler, Weed and Rigollet (2017), Near-linear time approximation algorithms for optimal transport via Sinkhorn iteration](https://proceedings.neurips.cc/paper_files/paper/2017/file/491442df5f88c6aa018e86dac21d3606-Paper.pdf). The dual is derived from the convex conjugate of `epsilon*p*log(p)` with this repository's constant convention. No reference code copied; no paper runtime, theorem guarantee, Greenkhorn implementation or benchmark result claimed.
 
@@ -157,21 +182,4 @@ The identity uses the active-support scaled-plan form. The demo's largest `abs(d
 
 Bounds match the solver:1..64 weights per side, cost[0,1e6], epsilon[1e-4,1e4], fixed updates1..5000 and active cells times updates<=10million. Cost directions must be finite in[-1e6,1e6]; epsilon direction in[-1e4,1e4]. Zero-weight support is excluded and returned as zero plan/tangent cells. No derivatives of weights, point coordinates, absolute/max residuals, stopping decisions or the rounded output are supplied. Signed directions are formal local perturbations; callers must keep the actual perturbation path within the accepted cost/epsilon domain. Underflow can erase tiny plan entries/tangents, and finite precision/cancellation remain limitations.
 
-Ten added tests cover independent central differences at several update counts for both cost-only and joint directions, a closed-form2x2 derivative, cost-shift invariance, simultaneous cost/epsilon scaling, a nonconverged shortcut counterexample, zero support/underflow/no mutation, permutation, comparison to the independent primal solver at fixed caps, invalid bounds/work and CLI errors. The original suite has 46 tests. The equations are derived from the existing log-domain update algebra; no external differentiation implementation or benchmark is used.
-
-
-## Normalized weight directions
-
-[Open the browser workbench](https://midya8.github.io/transportlab/) or read [MARGINALS.md](MARGINALS.md) for the input schema, derivation and limits. The browser normalizes raw source and target weights separately, differentiates that normalization, then follows exactly N row/column updates. Cost and epsilon may move at the same time. Every plan, tangent, marginal, potential and history row remains available, with editable input and a complete JSON download.
-
-One update of the early-weight control has full objective tangent `0.010665526`, while a requested-marginal envelope candidate gives `-0.019162331`. Their difference is accounted for by the actual marginal-tangent residual terms. The candidate is not an optimum derivative merely because it uses potentials. A normalization-only control has nonzero raw directions but zero normalized and plan tangents; null sensitivity does not establish feasibility.
-
-```sh
-python examples/marginal_controls.py
-python -m transportlab.marginal input.json > report.json
-node --test tests/*.cjs
-```
-
-This separate API accepts 1-4 weights per side, fixed support and 1-500 updates. Positive raw weights are at least `1e-4`; costs and raw weights are in `[0,100]`, epsilon in `[0.01,100]`, and directions in `[-100,100]`. It does not change the earlier solver's bounds. Formal local directions need not give a two-sided finite step inside those bounds. It does not differentiate adaptive stopping, rounding or changing support.
-
-The current suite has 62 Python tests and six Node/actual-Chrome tests, including the original 46 Python tests. Independent Decimal80 positive-kernel finite differences check 33 control snapshots and 60 generated rectangular cases. Native analytic tangents and independent browser scalar dual numbers agree on full reports for all 12 controls plus 80 generated cases. Actual Chrome checks every supplied history step, responsive editing and two real JSON downloads replayed natively. An installed-wheel check repeats the old demo and fixed-weight sensitivity outputs plus all new controls outside the source tree. These are bounded arithmetic and interaction checks, not certified optimality or large-scale performance results.
+Ten added tests cover independent central differences at several update counts for both cost-only and joint directions, a closed-form2x2 derivative, cost-shift invariance, simultaneous cost/epsilon scaling, a nonconverged shortcut counterexample, zero support/underflow/no mutation, permutation, comparison to the independent primal solver at fixed caps, invalid bounds/work and CLI errors. Those earlier 46 tests are retained within the current 62-test suite. The equations are derived from the existing log-domain update algebra; no external differentiation implementation or benchmark is used.
